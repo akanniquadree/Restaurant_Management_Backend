@@ -8,7 +8,8 @@ const tokenSchema  = mongoose.Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Users"
-    }
+    },
+    expireToken:Date
 })
 
 const Token = mongoose.model("Token", tokenSchema)
