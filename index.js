@@ -5,7 +5,7 @@ const morgan = require("morgan")
 const mongoose = require("mongoose")
 const userRouter = require("./Routes/User")
 const authRouter = require("./Routes/Auth")
-
+const cors = require("cors")
 
 const app = express()
 dotenv.config()
@@ -19,6 +19,7 @@ mongoose.connect(process.env.MONGODB_URL,{
 })
 
 app.use(express.json())
+app.use(cors())
 app.use(helmet())
 app.use(morgan("common"))
 
