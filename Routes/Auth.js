@@ -138,8 +138,8 @@ authRouter.post("/signin", async(req, res)=>{
 
 authRouter.get("/user/:id/verify/:token",async(req, res)=>{
     try {
-        const user = UserModel.findById(req.params.id)
-        const token = Token.findOne({token:req.params.token})
+        const user = await UserModel.findById(req.params.id)
+        const token = await Token.findOne({token:req.params.token})
         if(!user){
             return res.status(401).json({error:"Invalid User Account"})
         }
