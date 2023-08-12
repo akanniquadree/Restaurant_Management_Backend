@@ -136,4 +136,29 @@ authRouter.post("/signin", async(req, res)=>{
     }
 })
 
+authRouter.get("/user/:id/verify/:token",async(req, res)=>{
+    try {
+        const user = UserModel.findById(req.params.id)
+        const token = Token.findOne({token:req.params.token})
+        if(!user){
+            return res.status(401).json({error:"Invalid User Account"})
+        }
+        if(!token){
+             return res.status(401).json({error:"Invalid Token"})
+        }
+        const notExpireToken = Token.findOne({userId:user._id, expireToken:{$gt:Date.now}})
+        if(!notExpireToken){
+            return res.status(404).json({error:"The Link has expire, Please Log in again to reset link"})
+        }
+        user.verify = true
+        const update = await user.save()
+        if(update){
+            await Token.deleteOne()
+            return res.status(200).json({message:"Email has been verified"})
+        }
+    } catch (error) {
+        return res.status(500).json({error:error})
+    }
+})
+
 module.exports = authRouter
