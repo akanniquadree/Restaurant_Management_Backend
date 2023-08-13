@@ -196,6 +196,21 @@ authRouter.post("/resetpassword", async(req, res)=>{
     }
 })
 
+authRouter.get("/user/:id/resetpassword/:token", async(req, res)=>{
+    try {
+        const user = await UserModel.findById(req.params.id)
+        if(!user){
+            return res.status(400).json({error:"Invalid Link"})
+        }
+        if(user.resetToken !== req.params.token){
+            return res.status(400).json({error:"Invalid Link"})
+        }
+        return res.status(200).json()
+    } 
+    catch (error) {
+        return res.status(500).json(error)
+    }
+})
 authRouter.post("/user/:id/resetpassword/:token", async(req, res)=>{
     try {
         const {password, conPassword} = req.body
