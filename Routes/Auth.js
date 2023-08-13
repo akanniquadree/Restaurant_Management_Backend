@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const sgMail = require("@sendgrid/mail")
 const Token = require("../Model/Token")
+const crypto = require("crypto")
+
 
 const authRouter = express.Router()
 dotenv.config()
@@ -158,6 +160,74 @@ authRouter.get("/user/:id/verify/:token",async(req, res)=>{
         }
     } catch (error) {
         return res.status(500).json({error:error})
+    }
+})
+
+authRouter.post("/resetpassword", async(req, res)=>{
+    try {
+        const {email} = req.body
+        if(!email){
+            return res.status(422).json({error:"Please fill in all details"})
+        }
+        const user  = await UserModel.findOne({email:email})
+        if(!user){
+            return res.status(422).jsom({error:"Email doesnt exist in our record"})
+        }
+        const token = crypto.randomBytes(32).toString("hex")
+        user.resetToken = token
+        user.expireToken = Date.now() + 3600000
+        const savedUser = await user.save()
+        if(savedUser){
+            const url = `${process.env.BASE_URL}/user/${user._id}/resetpassword/${token}`
+            const send = {
+                to:`${user.email}`,
+                from:"akanniquadry7@gmail.com",
+                subject:"RESET PASSWORD",
+                html: `<p>Click on the link below to reset your password</p>
+                        <a href=${url}>${url}</a>
+                        <p>Link expires in an hour</p>`
+            }
+            sgMail.send(send).then(sent=>{
+                return res.status(201).json({message: "A mail has been sent to your mail to reset your password"})
+            }) 
+        }
+    } catch (error) {
+        return res.status(500).json(error)
+    }
+})
+
+authRouter.post("/user/:id/resetpassword/:token", async(req, res)=>{
+    try {
+        const {password, conPassword} = req.body
+        if(!password, !conPassword){
+            return res.status(422).json({error:"Please fill all required details"})
+        }
+        if(password !== conPassword){
+            return res.status(422).json({error:"Password doesnot match"})
+        }
+        const user = await UserModel.findById(req.params.id)
+        if(!user){
+            return res.status(400).json({error:"Invalid Link"})
+        }
+        if(user.resetToken !== req.params.token){
+            return res.status(400).json({error:"Invalid Link"})
+        }
+        const Notexpire = await UserModel.findOne({resetToken:req.params.token, expireToken:{$gt:Date.now()}})
+        if(!Notexpire){
+            return res.status(400).json({error:"Please try again, Session Expired"})
+        }
+        const salt = await bcrypt.genSalt(13)
+        const hashedPassword = await bcrypt.hash(password, hashedPassword)
+        user.password = hashedPassword
+        user.resetToken = undefined
+        user.expireToken = undefined
+        const newpassword = await user.save
+        if(newpassword){
+            return  res.status(200).json({message:"Password successfully updated"})
+        }
+    } 
+    catch (error) {
+        return res.status(500).json(error)
     }
 })
 

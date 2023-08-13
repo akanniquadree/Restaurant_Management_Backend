@@ -33,6 +33,8 @@ const userSchema = mongoose.Schema({
         type:String,
         default:""
     }, 
+    resetToken:String,
+    expireToken:Date
 },
 {timestamps:true}
 )
