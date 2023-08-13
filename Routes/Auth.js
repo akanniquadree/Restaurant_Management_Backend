@@ -171,7 +171,7 @@ authRouter.post("/resetpassword", async(req, res)=>{
         }
         const user  = await UserModel.findOne({email:email})
         if(!user){
-            return res.status(422).jsom({error:"Email doesnt exist in our record"})
+            return res.status(422).json({error:"Email doesnt exist in our record"})
         }
         const token = crypto.randomBytes(32).toString("hex")
         user.resetToken = token
