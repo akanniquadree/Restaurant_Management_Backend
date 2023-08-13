@@ -205,7 +205,7 @@ authRouter.get("/user/:id/resetpassword/:token", async(req, res)=>{
         if(user.resetToken !== req.params.token){
             return res.status(400).json({error:"Invalid Link"})
         }
-        return res.status(200).json()
+        return res.status(201).json({message:"ok"})
     } 
     catch (error) {
         return res.status(500).json(error)
