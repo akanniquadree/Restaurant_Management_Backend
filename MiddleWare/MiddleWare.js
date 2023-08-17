@@ -67,11 +67,12 @@ const Verify = async(req, res, next) =>{
         if(err){
             return res.status(403).json({error:"User Authentication Forbiddden, Please Re-login"})
         }
-        const {id} = payload
-        const user = await UserModel.findById(id)
-        const {password, ...others} = user.doc
-        req.user = others
-        next()
+        const {_id} = payload
+            await UserModel.findById(_id).then(savedUser=>{
+                const {password, ...others} = savedUser
+                req.user = savedUser
+                next()
+            })
     })
 }
 

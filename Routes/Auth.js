@@ -7,7 +7,7 @@ const sgMail = require("@sendgrid/mail")
 const Token = require("../Model/Token")
 const crypto = require("crypto")
 const BlackList  = require("../Model/BlackList")
-const { signUpValidation, LoginValidation } = require("../MiddleWare/MiddleWare")
+const { signUpValidation, LoginValidation, Verify } = require("../MiddleWare/MiddleWare")
 
 
 const authRouter = express.Router()
@@ -255,12 +255,14 @@ authRouter.post("/user/:id/resetpassword/:token", async(req, res)=>{
     }
 })
 
-authRouter.post("/logout",async(req, res)=>{
+authRouter.post("/logout", Verify,async(req, res)=>{
     try {
         const authHeader = req.headers['cookie']; // get the session cookie from request header
         if (!authHeader) return res.sendStatus(204); // No content
         const cookie = authHeader.split('=')[1]; // If there is, split the cookie string to get the actual jwt token
         const accessToken = cookie.split(';')[0];
+        // const checkIfBlacklisted = await BlackList.findOne({ token: accessToken });
+        // if (checkIfBlacklisted) return res.sendStatus(204);
         const user = await BlackList.findOne({userId:req.user._id})
         // const checkIfBlacklisted = await Blacklist.findOne({ token: accessToken });
         if(user){
@@ -268,7 +270,7 @@ authRouter.post("/logout",async(req, res)=>{
             const saved = await user.save()
             if(saved){
                 res.setHeader('Clear-Site-Data', '"cookies", "storage"');
-                res.status(200).json({ message: 'You are logged out!' });
+               return res.status(200).json({ message: 'You are logged out!' });
             }
         }
         const newBlacklist = new BlackList({
@@ -279,7 +281,7 @@ authRouter.post("/logout",async(req, res)=>{
         if(Saved){
             // Also clear request cookie on client
                 res.setHeader('Clear-Site-Data', '"cookies", "storage"');
-                res.status(200).json({ message: 'You are logged out!' });
+                return res.status(200).json({ message: 'You are logged out!' });
         }
         
       } catch (err) {
