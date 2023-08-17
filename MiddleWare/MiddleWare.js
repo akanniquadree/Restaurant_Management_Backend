@@ -1,9 +1,9 @@
-import { validationResult } from 'express-validator';
-import { check } from 'express-validator';
-import jwt from 'jsonwebtoken';
-import dotenv from "dotenv"
-import UserModel from '../Model/UserModel';
-import BlackList from '../Model/BlackList';
+const { validationResult } = require ('express-validator');
+const { check } = require ('express-validator');
+const jwt = require ('jsonwebtoken');
+const dotenv = require ("dotenv")
+const UserModel = require ('../Model/UserModel');
+const BlackList = require ('../Model/BlackList');
 
 dotenv.config
 
@@ -50,7 +50,7 @@ export const Verify = async(req, res, next) =>{
 
 export function VerifyRole(req, res, next) {
     try {
-      const user = req.user; // we have access to the user object from the request
+      const user = req.user; // we have access to the user object = require the request
       const { role } = user; // extract the user role
       // check if user has no advance privileges
       // return an unathorized response

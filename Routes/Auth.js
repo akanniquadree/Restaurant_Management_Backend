@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken")
 const sgMail = require("@sendgrid/mail")
 const Token = require("../Model/Token")
 const crypto = require("crypto")
-const { default: BlackList } = require("../Model/BlackList")
+const BlackList  = require("../Model/BlackList")
 
 
 const authRouter = express.Router()
