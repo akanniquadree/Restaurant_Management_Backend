@@ -18,6 +18,7 @@ mongoose.connect(process.env.MONGODB_URL,{
     console.log("Connected to Database")
 })
 
+app.use(cookieParser());
 app.use(express.json())
 app.use(cors())
 app.use(helmet())

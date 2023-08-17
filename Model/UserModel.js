@@ -14,7 +14,9 @@ const userSchema = mongoose.Schema({
     email:{
         type:String,
         required:true,
-        unique:true
+        unique:true,
+        lowercase: true,
+        trim: true,
     },
     password:{
         type:String,
@@ -26,8 +28,9 @@ const userSchema = mongoose.Schema({
         default:false
     },
     verify:{
-        type:Boolean,
-        default:false
+        type: String,
+        required: true,
+        default: '0u00',
     },
     profPic:{
         type:String,

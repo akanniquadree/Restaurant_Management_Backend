@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken")
 const sgMail = require("@sendgrid/mail")
 const Token = require("../Model/Token")
 const crypto = require("crypto")
+const { default: BlackList } = require("../Model/BlackList")
 
 
 const authRouter = express.Router()
@@ -32,7 +33,7 @@ authRouter.post("/register", async(req, res)=>{
         })
         const savedUser = await user.save()
         if(savedUser){
-            const jwToken = jwt.sign({_id:savedUser._id}, process.env.JWT_ACTIVATION)
+            const jwToken = crypto.randomBytes(84).toString("hex")
             const token = new Token({
                 token:jwToken,
                 userId:savedUser._id,
@@ -78,7 +79,7 @@ authRouter.post("/signin", async(req, res)=>{
         } 
         if(!user.verify){
             const TokenSave = await Token.findOne({userId:user._id})
-            const jwToken = jwt.sign({_id:user._id}, process.env.JWT_ACTIVATION)
+            const jwToken =  crypto.randomBytes(84).toString("hex")
             if(!TokenSave){
                 const token = new Token({
                     token:jwToken,
@@ -126,9 +127,16 @@ authRouter.post("/signin", async(req, res)=>{
             }
         }
         else{
-            const tokenHeader = jwt.sign({_id:user._id},process.env.JWT_HEADER,{expiresIn:"360000"})
+            let options = {
+                maxAge: 60 * 60 * 1000, // would expire in 1hr
+                httpOnly: true, // The cookie is only accessible by the web server
+                secure: true,
+                sameSite: 'None',
+              };
+            const tokenHeader = jwt.sign({_id:user._id},process.env.JWT_HEADER,{expiresIn:"3600000"})
             const {password, ...others} = user._doc
-            return res.status(200).json({others, tokenHeader})
+            res.cookie('SessionID', tokenHeader, options)
+            return res.status(200).json({others})
         }
         
         
@@ -205,7 +213,7 @@ authRouter.get("/user/:id/resetpassword/:token", async(req, res)=>{
         if(user.resetToken !== req.params.token){
             return res.status(400).json({error:"Invalid Link"})
         }
-        return res.status(200).json()
+        return res.status(200).json({message:"ok"})
     } 
     catch (error) {
         return res.status(500).json(error)
@@ -244,6 +252,41 @@ authRouter.post("/user/:id/resetpassword/:token", async(req, res)=>{
     catch (error) {
         return res.status(500).json(error)
     }
+})
+
+authRouter.post("/logout",async(req, res)=>{
+    try {
+        const authHeader = req.headers['cookie']; // get the session cookie from request header
+        if (!authHeader) return res.sendStatus(204); // No content
+        const cookie = authHeader.split('=')[1]; // If there is, split the cookie string to get the actual jwt token
+        const accessToken = cookie.split(';')[0];
+        const user = await BlackList.findOne({userId:req.user._id})
+        // const checkIfBlacklisted = await Blacklist.findOne({ token: accessToken });
+        if(user){
+            user.token = accessToken
+            const saved = await user.save()
+            if(saved){
+                res.setHeader('Clear-Site-Data', '"cookies", "storage"');
+                res.status(200).json({ message: 'You are logged out!' });
+            }
+        }
+        const newBlacklist = new BlackList({
+          token: accessToken,
+          userId: req.user._id
+        });
+        const Saved = await newBlacklist.save();
+        if(Saved){
+            // Also clear request cookie on client
+                res.setHeader('Clear-Site-Data', '"cookies", "storage"');
+                res.status(200).json({ message: 'You are logged out!' });
+        }
+        
+      } catch (err) {
+        res.status(500).json({
+          status: 'error',
+          message: 'Internal Server Error',
+        });
+      }
 })
 
 module.exports = authRouter
