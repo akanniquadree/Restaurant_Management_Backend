@@ -7,13 +7,14 @@ const sgMail = require("@sendgrid/mail")
 const Token = require("../Model/Token")
 const crypto = require("crypto")
 const BlackList  = require("../Model/BlackList")
+const { signUpValidation, LoginValidation } = require("../MiddleWare/MiddleWare")
 
 
 const authRouter = express.Router()
 dotenv.config()
 sgMail.setApiKey(process.env.SENDGRID_TRANSPORT)
 
-authRouter.post("/register", async(req, res)=>{
+authRouter.post("/register", signUpValidation,async(req, res)=>{
     try {
         const {email,first_name,last_name, password, conPassword, } = req.body
         if(!email || !password || !first_name || !last_name || !conPassword){
@@ -62,7 +63,7 @@ authRouter.post("/register", async(req, res)=>{
     }
 })
 
-authRouter.post("/signin", async(req, res)=>{
+authRouter.post("/signin", LoginValidation,async(req, res)=>{
     try {
         const {email, password} = req.body
         // let conditions = (cred.indexOf("@") === -1) ? {username: cred} : {email: cred}
@@ -136,7 +137,7 @@ authRouter.post("/signin", async(req, res)=>{
             const tokenHeader = jwt.sign({_id:user._id},process.env.JWT_HEADER,{expiresIn:"3600000"})
             const {password, ...others} = user._doc
             res.cookie('SessionID', tokenHeader, options)
-            return res.status(200).json({others})
+            return res.status(200).json(others)
         }
         
         

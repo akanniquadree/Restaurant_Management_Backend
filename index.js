@@ -24,7 +24,7 @@ app.use(cors())
 app.use(helmet())
 app.use(morgan("common"))
 
-app.use("/api", userRouter)
+app.use("/api", ,userRouter)
 app.use("/api/auth", authRouter)
 
 app.listen(process.env.PORT, ()=>{

@@ -8,15 +8,42 @@ const BlackList = require ('../Model/BlackList');
 dotenv.config
 
 
-export const userValidation = (req, res, next) =>{
+export const signUpValidation = (req, res, next) =>{
     check('email')
     .isEmail()
     .withMessage('Enter a valid email address')
     .normalizeEmail(),
+  check('first_name')
+    .not()
+    .isEmpty()
+    .withMessage('You first name is required')
+    .trim()
+    .escape(),
+  check('last_name')
+    .not()
+    .isEmpty()
+    .withMessage('You last name is required')
+    .trim()
+    .escape(),
   check('password')
     .notEmpty()
     .isLength({ min: 8 })
     .withMessage('Must be at least 8 chars long')
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      let error = {};
+      errors.array().map((err) => (error[err.param] = err.msg));
+      return res.status(422).json({ error });
+    }
+    next();
+
+}
+export const LoginValidation = (req, res, next) =>{
+    check('email')
+    .isEmail()
+    .withMessage('Enter a valid email address')
+    .normalizeEmail(),
+  check('password').not().isEmpty()
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       let error = {};
