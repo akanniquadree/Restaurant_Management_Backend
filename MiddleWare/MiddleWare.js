@@ -8,7 +8,7 @@ const BlackList = require ('../Model/BlackList');
 dotenv.config
 
 
-export const signUpValidation = (req, res, next) =>{
+const signUpValidation = (req, res, next) =>{
     check('email')
     .isEmail()
     .withMessage('Enter a valid email address')
@@ -38,7 +38,7 @@ export const signUpValidation = (req, res, next) =>{
     next();
 
 }
-export const LoginValidation = (req, res, next) =>{
+const LoginValidation = (req, res, next) =>{
     check('email')
     .isEmail()
     .withMessage('Enter a valid email address')
@@ -55,7 +55,7 @@ export const LoginValidation = (req, res, next) =>{
 }
 
 
-export const Verify = async(req, res, next) =>{
+const Verify = async(req, res, next) =>{
     const Authorization = req.headers["cookie"]
     if(!Authorization) return res.status(401).json({error:"You are not Authorized"})
     const cookie = Authorization.split("=")[1];
@@ -75,7 +75,7 @@ export const Verify = async(req, res, next) =>{
     })
 }
 
-export function VerifyRole(req, res, next) {
+const VerifyRole = (req, res, next) =>{
     try {
       const user = req.user; // we have access to the user object = require the request
       const { role } = user; // extract the user role
@@ -97,3 +97,6 @@ export function VerifyRole(req, res, next) {
       });
     }
   }
+
+
+  module.exports = {Verify, VerifyRole, LoginValidation, signUpValidation}
