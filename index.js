@@ -1,10 +1,12 @@
 const express = require("express")
 const dotenv = require("dotenv")
 const helmet = require("helmet")
+const cookieParser = require("cookie-parser")
 const morgan = require("morgan")
 const mongoose = require("mongoose")
 const userRouter = require("./Routes/User")
 const authRouter = require("./Routes/Auth")
+
 const cors = require("cors")
 
 const app = express()
@@ -24,7 +26,7 @@ app.use(cors())
 app.use(helmet())
 app.use(morgan("common"))
 
-app.use("/api", ,userRouter)
+app.use("/api", userRouter)
 app.use("/api/auth", authRouter)
 
 app.listen(process.env.PORT, ()=>{
