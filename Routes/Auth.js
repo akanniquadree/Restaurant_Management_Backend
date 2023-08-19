@@ -255,7 +255,7 @@ authRouter.post("/user/:id/resetpassword/:token", async(req, res)=>{
     }
 })
 
-authRouter.post("/logout", Verify,async(req, res)=>{
+authRouter.get("/logout", Verify,async(req, res)=>{
     try {
         const authHeader = req.headers['cookie']; // get the session cookie from request header
         if (!authHeader) return res.sendStatus(204); // No content
