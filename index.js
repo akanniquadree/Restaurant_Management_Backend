@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGODB_URL,{
 
 app.use(cookieParser());
 app.use(express.json())
-app.use(cors())
+app.use(cors( { credentials: true,origin:["http://localhost:3000", "https://mandykitchen.netlify.app/"]} ))
 app.use(helmet())
 app.use(morgan("common"))
 
