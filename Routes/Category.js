@@ -1,13 +1,14 @@
 const express = require("express")
 const CategoryModel = require("../Model/CategoryModel")
 const ProductsModel = require("../Model/ProductModel")
+const { Verify, VerifyRole } = require("../MiddleWare/MiddleWare")
 
 
 const categoryRouter = express.Router()
 
 
 //Get all Category
-categoryRouter.get("/cateogry", async(req, res)=>{
+categoryRouter.get("/cateogry",Verify, VerifyRole, async(req, res)=>{
     try {
         const cat = await CategoryModel.find().populate("productId").sort("-createdAt")
         if(cat){
@@ -22,7 +23,7 @@ categoryRouter.get("/cateogry", async(req, res)=>{
 })
 
 //Create A Category
-categoryRouter.post("/cateogry", async(req, res)=>{
+categoryRouter.post("/cateogry",Verify, VerifyRole, async(req, res)=>{
     try {
         const {name} = req.body
         if(!name){
@@ -42,7 +43,7 @@ categoryRouter.post("/cateogry", async(req, res)=>{
 })
 
 //delete  Category
-categoryRouter.delete("/cateogry/:id", async(req, res)=>{
+categoryRouter.delete("/cateogry/:id", Verify, VerifyRole,async(req, res)=>{
     try {
         const cat = await CategoryModel.findById(req.params.id)
         const product = await ProductsModel.findOne({categoryId:req.params.id})
@@ -63,7 +64,7 @@ categoryRouter.delete("/cateogry/:id", async(req, res)=>{
 })
 
 //Update A Category
-categoryRouter.put("/category/:id", async(req, res)=>{
+categoryRouter.put("/category/:id",Verify, VerifyRole, async(req, res)=>{
     try {
         const {name} = req.body
         if(!name){

@@ -24,8 +24,8 @@ const userSchema = mongoose.Schema({
         min:5
     },
     isAdmin:{
-        type:Boolean,
-        default:false
+        type:String,
+        default:"000U0"
     },
     verify:{
         type: String,

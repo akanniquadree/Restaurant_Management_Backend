@@ -46,7 +46,7 @@ productRouter.get("/product/:id",async(req, res)=>{
 
 
 //Create A Product
-productRouter.post("/product", async(req, res)=>{
+productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
     try {
         const {name,price,cat, discount, qty, detail,ingredient,time,other} = req.body
         const avatar = req.files.avatar
@@ -134,7 +134,7 @@ productRouter.post("/product", async(req, res)=>{
 })
 
 //delete  Produt
-productRouter.delete("/product/:id", async(req, res)=>{
+productRouter.delete("/product/:id",Verify, VerifyRole, async(req, res)=>{
     try {
         const product = await ProductsModel.findById(req.params.id)
         const cat = await CategoryModel.findByIdAndUpdate({_id:product.categoryId},{$pull:{productId:product._id}},{new:true})
@@ -155,7 +155,7 @@ productRouter.delete("/product/:id", async(req, res)=>{
 
 
 // //Update A Product
-productRouter.put("/product/:id", async(req, res)=>{
+productRouter.put("/product/:id",Verify, VerifyRole, async(req, res)=>{
     try {
         const {name,price,cat, discount, qty, detail,ingredient,time,other} = req.body
         const avatar = req.files.avatar
