@@ -3,6 +3,7 @@ const CategoryModel = require("../Model/CategoryModel")
 const ProductsModel = require("../Model/ProductModel")
 const cloudinary = require("cloudinary")
 const crypto = require("crypto")
+const { Verify, VerifyRole } = require("../MiddleWare/MiddleWare")
 
 const productRouter = express.Router()
 
