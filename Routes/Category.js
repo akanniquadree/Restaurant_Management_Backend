@@ -8,7 +8,7 @@ const categoryRouter = express.Router()
 
 
 //Get all Category
-categoryRouter.get("/cateogry",Verify, VerifyRole, async(req, res)=>{
+categoryRouter.get("/category", async(req, res)=>{
     try {
         const cat = await CategoryModel.find().populate("productId").sort("-createdAt")
         if(cat){
@@ -23,7 +23,7 @@ categoryRouter.get("/cateogry",Verify, VerifyRole, async(req, res)=>{
 })
 
 //Create A Category
-categoryRouter.post("/cateogry",Verify, VerifyRole, async(req, res)=>{
+categoryRouter.post("/category",Verify, VerifyRole, async(req, res)=>{
     try {
         const {name} = req.body
         if(!name){
@@ -43,7 +43,7 @@ categoryRouter.post("/cateogry",Verify, VerifyRole, async(req, res)=>{
 })
 
 //delete  Category
-categoryRouter.delete("/cateogry/:id", Verify, VerifyRole,async(req, res)=>{
+categoryRouter.delete("/category/:id", Verify, VerifyRole,async(req, res)=>{
     try {
         const cat = await CategoryModel.findById(req.params.id)
         const product = await ProductsModel.findOne({categoryId:req.params.id})
