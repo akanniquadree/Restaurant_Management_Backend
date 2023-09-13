@@ -23,14 +23,14 @@ const userSchema = mongoose.Schema({
         required:true,
         min:5
     },
-    isAdmin:{
+    role:{
         type:String,
         default:"000U0"
     },
     verify:{
-        type: String,
+        type: Boolean,
         required: true,
-        default: '0u00',
+        default: false,
     },
     profPic:{
         type:String,
