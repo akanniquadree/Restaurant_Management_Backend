@@ -50,7 +50,7 @@ productRouter.get("/product/:id",async(req, res)=>{
 productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
     try {
         const {name,price,cat, discount, qty, detail,ingredient,time,other} = req.body
-        const {avatar} = req.files.avatar
+        const avatar = req.files.avatar
         if(!name || !price || !qty || !detail || !ingredient || !time || !avatar) {
             return res.status(422).json({error:"Fill all required fields"})
         }
