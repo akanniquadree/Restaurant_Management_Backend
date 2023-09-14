@@ -72,10 +72,10 @@ productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
         })
         if(avatar_clod){
             // let imgs = req.files.imgs
-            let uploadLength = imgs.length
+            // let uploadLength = imgs.length
             var uploadRes = []
             
-            for(let i=0; i < imgs.length; i++){
+            for(let i=0; i < req.files.imgs.length; i++){
                 let img = req.files.imgs[i]
                 await cloudinary.uploader.upload(img.tempFilePath,function (res){
                     uploadRes.push(res)
