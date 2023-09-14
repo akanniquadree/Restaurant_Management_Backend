@@ -50,7 +50,7 @@ productRouter.get("/product/:id",async(req, res)=>{
 productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
     try {
         const {name,price,cat, discount, qty, detail,ingredient,time,other} = req.body
-        const avatar = req.files.avatar
+        const {avatar} = req.files.avatar
         if(!name || !price || !qty || !detail || !ingredient || !time || !avatar) {
             return res.status(422).json({error:"Fill all required fields"})
         }
@@ -61,7 +61,7 @@ productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
         const code = crypto.randomBytes(4).toString("hex")
         const cate = await CategoryModel.findOne({name:cat})
         if(!cate){
-            return res.status(200).json({error:"Category Name doesnt exist in our record"})
+            return res.status(422).json({error:"Category Name doesnt exist in our record"})
         }
         //create a folder in your clodinary
         
@@ -71,12 +71,12 @@ productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
             use_filename:true
         })
         if(avatar_clod){
-            let imgs = req.files.imgs
+            // let imgs = req.files.imgs
             let uploadLength = imgs.length
             var uploadRes = []
             
             for(let i=0; i < imgs.length; i++){
-                let img = imgs[i]
+                let img = req.files.imgs[i]
                 await cloudinary.uploader.upload(img.tempFilePath,function (res){
                     uploadRes.push(res)
                 },{
@@ -130,7 +130,7 @@ productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
         
     } catch (error) {
         console.log(error)
-        return res.status(500).json({error:error})
+        return res.status(500).json({error:"error"})
     }
 })
 
