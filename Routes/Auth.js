@@ -16,8 +16,8 @@ sgMail.setApiKey(process.env.SENDGRID_TRANSPORT)
 
 authRouter.post("/register", signUpValidation,async(req, res)=>{
     try {
-        const {email,first_name,last_name, password, conPassword, } = req.body
-        if(!email || !password || !first_name || !last_name || !conPassword){
+        const {email,first_name,last_name, password, conPassword,phone } = req.body
+        if(!email || !password || !first_name || !last_name ||!phone|| !conPassword){
             return res.status(403).json({error:"Please Fill All Required Fields"})
         }
         if(password !== conPassword){

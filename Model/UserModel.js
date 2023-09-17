@@ -40,6 +40,10 @@ const userSchema = mongoose.Schema({
         type:String,
         default:""
     },
+    phone:{
+        type:String,
+        default:""
+    },
     resetToken:String,
     expireToken:Date
 },

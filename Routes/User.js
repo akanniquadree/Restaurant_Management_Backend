@@ -46,14 +46,14 @@ userRouter.put("/user/:id",Verify, async(req, res)=>{
         }
         const user =  await UserModel.findById(req.params.id)
         if(!user){return res.status(422).json({error:"Invalid User"})}
-        const {email,first_name,last_name,add} = req.body
-        if(!email  || !first_name || !last_name || !add){
+        const {first_name,phone,last_name,add} = req.body
+        if(!first_name || !last_name||!phone || !add){
             return res.status(422).json({error:"Please Fill All Required Fields"})
         }
-        user.email = email
         user.last_name = last_name
         user.first_name = first_name
         user.add = add
+        user.phone =phone
         const updateUser = await user.save()
         if(updateUser) { return res.status(200).json({message:"User Updated Successfully", updateUser})}
             return res.status(422).json({error:"Error in editing user"})
@@ -77,7 +77,7 @@ userRouter.put("/user/pic/:id",Verify, async(req, res)=>{
             use_filename:true
         })
         if(profieCloud){
-            user.profPic = profieCloud.UploadStream
+            user.profPic = profieCloud.url
             const savedUser = await user.save()
             if(savedUser){
                 return res.status(200).json({mesage:"Profile Picture Uploaded Successfully", savedUser})
@@ -141,5 +141,66 @@ userRouter.delete("/user/:id",Verify, async(req, res)=>{
     }
 })
 
+//admin add user
+authRouter.post("/user/admin", Verify,VerifyRole,async(req, res)=>{
+    try {
+        const {email,first_name,last_name, password, verify,role,add,phone } = req.body
+        if(!email || !password || !first_name || !last_name || !add  ||!phone||!role||!verify){
+            return res.status(403).json({error:"Please Fill All Required Fields"})
+        }
+        const existEmail = await UserModel.findOne({email:email})
+        if(existEmail){
+            return res.status(403).json({error:"Email already exist in our record"})
+        }
+        const salt = await bcrypt.genSalt(13)
+        const hashedPassword = await bcrypt.hash(password, salt)
+        const picture = req.files.profPic
+        const profieCloud = await cloudinary.UploadStream.upload(picture.tempFilePath,function(res){},{
+            folder:`MandyRestuarant/Users/${user.email}`,
+            resource_type:"auto",
+            use_filename:true
+        })
+        if(!profieCloud){
+            return res.status(422).json({error:"Error in uplading picture"})
+        }
+          
+        const user = new UserModel({
+            email,first_name,last_name,password:hashedPassword,verify,role,add,phone,profPic:profieCloud.url
+        })
+        const savedUser = await user.save()
+        if(savedUser){
+            if(verify === false){
+                const jwToken = crypto.randomBytes(84).toString("hex")
+                const token = new Token({
+                    token:jwToken,
+                    userId:savedUser._id,
+                    expireToken: Date.now() + 3600000
+                })
+                const savedToken = await token.save()
+                if(savedToken){
+                    const url = `${process.env.BASE_URL}/user/${savedUser._id}/verify/${jwToken}`
+                    const send = {
+                        to:savedUser.email,
+                        from:"akanniquadry7@gmail.com",
+                        subject: "ACCOUNT VERIFICATION",
+                        html:`
+                            <h4>Verify your email by clicking this </h4>
+                            <p><a href="${url}">${url}</a></p>
+                        `
+                    }
+                    sgMail.send(send).then(sent=>{
+                        return res.status(201).json({message: "A mail has been sent to your Email, please verify your email"})
+                    }) 
+                }
+            }
+            else{
+                return res.status(201).json({message: "User created successfully"})
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({error:error})
+    }
+})
 
 module.exports = userRouter
