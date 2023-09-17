@@ -92,7 +92,7 @@ productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
             if(saveProduct){
                         cate.productId.push(saveProduct._id)
                         await cate.save()
-                        return res.status(200).json({message:"Product Created Successfully"})
+                        return res.status(200).json({message:"Product Created Successfully",saveProduct})
                     
             }
     
@@ -142,11 +142,11 @@ productRouter.delete("/product/:id",Verify, VerifyRole, async(req, res)=>{
         if(!product){
             return res.status(422).json({error:"Product cannot be found and updated"})
         }
-        product.deleteOne()
+        savedCat = product.deleteOne()
         if(savedCat){
-            return res.status(201).json({message:"Category Updated Successfully"})
+            return res.status(201).json({message:"Product Updated Successfully", savedCat})
         }
-            return res.status(422).json({error:"Error in updating category"})
+            return res.status(422).json({error:"Error in deleting category"})
 
     } catch (error) {
         console.log(error)

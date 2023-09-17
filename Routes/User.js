@@ -140,7 +140,7 @@ userRouter.delete("/user/:id",Verify, async(req, res)=>{
             return res.status(422).json({error:"You can only delete your account"})
         }
         const user =  await UserModel.findByIdAndDelete(req.params.id)
-        if(user){return res.status(422).json({message:"User Delete Successfully "})}
+        if(user){return res.status(422).json({message:"User Delete Successfully ",user})}
         return res.status(422).json({error:"Error in deleting user"})
     } catch (error) {
             console.log(error)
@@ -196,12 +196,12 @@ userRouter.post("/user/admin", Verify,VerifyRole,async(req, res)=>{
                         `
                     }
                     sgMail.send(send).then(sent=>{
-                        return res.status(201).json({message: "A mail has been sent to your Email, please verify your email"})
+                        return res.status(201).json({message: "A mail has been sent to your Email, please verify your email",savedUser})
                     }) 
                 }
             }
             else{
-                return res.status(201).json({message: "User created successfully"})
+                return res.status(201).json({message: "User created successfully",savedUser})
             }
         }
     } catch (error) {
