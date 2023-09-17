@@ -2,8 +2,14 @@ const express = require("express")
 const { Verify, VerifyRole } = require("../MiddleWare/MiddleWare")
 const cloudinary = require("cloudinary")
 const UserModel = require("../Model/UserModel")
+const crypto = require("crypto")
+const sgMail = require("@sendgrid/mail")
+const dotenv = require("dotenv")
 
 const userRouter = express.Router()
+dotenv.config()
+sgMail.setApiKey(process.env.SENDGRID_TRANSPORT)
+
 
 cloudinary.config({
     cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
