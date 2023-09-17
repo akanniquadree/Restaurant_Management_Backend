@@ -5,6 +5,7 @@ const UserModel = require("../Model/UserModel")
 const crypto = require("crypto")
 const sgMail = require("@sendgrid/mail")
 const dotenv = require("dotenv")
+const bcrypt = require("bcrypt")
 
 const userRouter = express.Router()
 dotenv.config()
