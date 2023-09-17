@@ -163,7 +163,7 @@ userRouter.post("/user/admin", Verify,VerifyRole,async(req, res)=>{
         const hashedPassword = await bcrypt.hash(password, salt)
         const picture = req.files.profPic
         const profieCloud = await cloudinary.uploader.upload(picture.tempFilePath,function(res){},{
-            folder:`MandyRestuarant/Users/${user.email}`,
+            folder:`MandyRestuarant/Users/${email}`,
             resource_type:"auto",
             use_filename:true
         })
@@ -206,7 +206,7 @@ userRouter.post("/user/admin", Verify,VerifyRole,async(req, res)=>{
         }
     } catch (error) {
         console.log(error)
-        return res.status(500).json({error:error})
+        return res.status(500).json({error:"error"})
     }
 })
 
