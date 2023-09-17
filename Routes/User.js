@@ -78,7 +78,7 @@ userRouter.put("/user/pic/:id",Verify, async(req, res)=>{
         const user =  await UserModel.findById(req.params.id)
         if(!user){return res.status(422).json({error:"Invalid User"})}
         const picture = req.files.profPic
-        const profieCloud = await cloudinary.UploadStream.upload(picture.tempFilePath,function(res){},{
+        const profieCloud = await cloudinary.uploader.upload(picture.tempFilePath,function(res){},{
             folder:`MandyRestuarant/Users/${user.email}`,
             resource_type:"auto",
             use_filename:true
@@ -162,7 +162,7 @@ userRouter.post("/user/admin", Verify,VerifyRole,async(req, res)=>{
         const salt = await bcrypt.genSalt(13)
         const hashedPassword = await bcrypt.hash(password, salt)
         const picture = req.files.profPic
-        const profieCloud = await cloudinary.UploadStream.upload(picture.tempFilePath,function(res){},{
+        const profieCloud = await cloudinary.uploader.upload(picture.tempFilePath,function(res){},{
             folder:`MandyRestuarant/Users/${user.email}`,
             resource_type:"auto",
             use_filename:true
