@@ -149,7 +149,7 @@ userRouter.delete("/user/:id",Verify, async(req, res)=>{
 })
 
 //admin add user
-authRouter.post("/user/admin", Verify,VerifyRole,async(req, res)=>{
+userRouter.post("/user/admin", Verify,VerifyRole,async(req, res)=>{
     try {
         const {email,first_name,last_name, password, verify,role,add,phone } = req.body
         if(!email || !password || !first_name || !last_name || !add  ||!phone||!role||!verify){
