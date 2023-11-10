@@ -136,7 +136,7 @@ userRouter.post("/user/newpassword/:id", Verify, async(req, res)=>{
 //delete User
 userRouter.delete("/user/:id",Verify, async(req, res)=>{
     try {
-        if(req.user._id.toString() !== req.params.id || req.user.role === "0A10" ){
+        if(req.user._id.toString() !== req.params.id || req.user.role !== "0A10" ){
             return res.status(422).json({error:"You can only delete your account"})
         }
         const user =  await UserModel.findByIdAndDelete(req.params.id)
