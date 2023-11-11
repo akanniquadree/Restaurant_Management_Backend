@@ -140,7 +140,7 @@ userRouter.delete("/user/:id",Verify, async(req, res)=>{
             return res.status(422).json({error:"You can only delete your account"})
         }
         const user =  await UserModel.findByIdAndDelete(req.params.id)
-        if(user){return res.status(422).json({message:"User Delete Successfully ",user})}
+        if(user){return res.status(201).json({message:"User Delete Successfully ",user})}
         return res.status(422).json({error:"Error in deleting user"})
     } catch (error) {
             console.log(error)
