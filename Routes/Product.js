@@ -137,14 +137,14 @@ productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
 //delete  Produt
 productRouter.delete("/product/:id",Verify, VerifyRole, async(req, res)=>{
     try {
-        const product = await ProductsModel.findById(req.params.id)
-        const cat = await CategoryModel.findByIdAndUpdate({_id:product.categoryId},{$pull:{productId:product._id}},{new:true})
-        if(!product){
+        const user = await ProductsModel.findById(req.params.id)
+        const cat = await CategoryModel.findByIdAndUpdate({_id:item.categoryId},{$pull:{productId:product._id}},{new:true})
+        if(!user){
             return res.status(422).json({error:"Product cannot be found and updated"})
         }
-        savedCat = product.deleteOne()
+        savedCat = user.deleteOne()
         if(savedCat){
-            return res.status(201).json({message:"Product Updated Successfully", savedCat})
+            return res.status(201).json({message:"Product Updated Successfully", user})
         }
             return res.status(422).json({error:"Error in deleting category"})
 
