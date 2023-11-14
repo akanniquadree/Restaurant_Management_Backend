@@ -138,7 +138,7 @@ productRouter.post("/product",Verify, VerifyRole, async(req, res)=>{
 productRouter.delete("/product/:id",Verify, VerifyRole, async(req, res)=>{
     try {
         const user = await ProductsModel.findById(req.params.id)
-        const cat = await CategoryModel.findByIdAndUpdate({_id:item.categoryId},{$pull:{productId:product._id}},{new:true})
+        const cat = await CategoryModel.findByIdAndUpdate({_id:user.categoryId},{$pull:{productId:user._id}},{new:true})
         if(!user){
             return res.status(422).json({error:"Product cannot be found and updated"})
         }
