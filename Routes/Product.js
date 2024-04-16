@@ -176,20 +176,21 @@ productRouter.put("/product/:id",Verify, VerifyRole, async(req, res)=>{
             resource_type:"auto",
             use_filename:true
         })
-        if(avatar_clod){
-            const imgs = req.files.imgs
-            const img = imgs[i]
-            uploadRes =[]
-            for(i=0;i<img.length;i++){
-                await cloudinary.uploader.upload(img.tempFilePath,function(res){
-                        uploadRes.push(res)
+       if(avatar_clod){
+            // let imgs = req.files.imgs
+            // let uploadLength = imgs.length
+            var uploadRes = []
+            
+            for(let i=0; i < req.files.imgs.length; i++){
+                let img = req.files.imgs[i]
+                await cloudinary.uploader.upload(img.tempFilePath,function (res){
+                    uploadRes.push(res)
                 },{
                     folder:`MandyRestuarant/Products/${name}`,
                     resource_type:"auto",
                     use_filename:true
                 })
-            }
-        }
+            }}
         Product.name = name
         Product.price = price
         Product.cat = cate._id

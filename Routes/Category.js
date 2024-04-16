@@ -32,7 +32,7 @@ categoryRouter.post("/category",Verify, VerifyRole, async(req, res)=>{
         const cat = new CategoryModel({name})
         const savedCat = await cat.save()
         if(savedCat){
-            return res.status(201).json({message:"Category Added Successfully"})
+            return res.status(201).json({savedCat, message:"Category Added Successfully"})
         }
             return res.status(422).json({error:"Error in creating category"})
 
