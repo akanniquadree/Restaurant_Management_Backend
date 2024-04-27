@@ -46,9 +46,9 @@ categoryRouter.post("/category", Verify, VerifyRole, async (req, res) => {
 // Verify, VerifyRole
 categoryRouter.delete("/category/:id", Verify, VerifyRole, async (req, res) => {
   try {
-    const cat = await CategoryModel.findById(req.params.id);
+    const user = await CategoryModel.findById(req.params.id);
 
-    if (!cat) {
+    if (!user) {
       return res
         .status(422)
         .json({ error: "Category cannot be found and updated" });
@@ -56,12 +56,14 @@ categoryRouter.delete("/category/:id", Verify, VerifyRole, async (req, res) => {
     // if (product) {
     //   product.deleteMany({});
     // }
-    if (cat) {
-      await cat.deleteOne();
+    if (user) {
+      await user.deleteOne();
       await ProductsModel.deleteMany({
         categoryId: req.params.id,
       });
-      return res.status(201).json({ message: "Category Deleted Successfully" });
+      return res
+        .status(201)
+        .json({ message: "Category Deleted Successfully", user });
     }
     return res.status(422).json({ error: "Error in Deleting category" });
   } catch (error) {
