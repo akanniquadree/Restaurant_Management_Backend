@@ -64,7 +64,7 @@ cartRouter.put("/cart/:id", Verify, async (req, res) => {
       return res.status(404).json({ error: "Cart cannot be found" });
     }
     const existingCart = cart.item.find(
-      (item) => item.product.toString() === req.params.id.toString()
+      (item) => item.product._id.toString() === req.params.id.toString()
     );
     if (!existingCart) {
       return res.status(404).json({ error: "Product not found in the cart" });
