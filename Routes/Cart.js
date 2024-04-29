@@ -57,7 +57,7 @@ cartRouter.put("/cart/:id", Verify, async (req, res) => {
   try {
     const { qty } = req.body;
     let cart = await CartModel.findOne({ userId: req.user._id })
-      .populate()
+      .populate("item.product")
       .sort("-createdAt");
     const product = await ProductsModel.findById(req.params.id);
     if (!cart) {
@@ -147,7 +147,7 @@ cartRouter.get("/cart", Verify, async (req, res) => {
   try {
     // Check if the User has existing cartItem
     let cart = await CartModel.findOne({ userId: req.user._id })
-      .populate()
+      .populate("item.product")
       .sort("-createdAt");
     if (!cart) {
       return res.status(404).json({ error: "Cart is Empty" });
